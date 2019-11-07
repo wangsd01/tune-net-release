@@ -40,20 +40,20 @@ def train(epoch,
     batch_idx = 0
     for (zeta_batch, s_batch, _) in data_loader:
         zeta_batch = zeta_batch.float().to(device)
-        s_batch = s_batch.float().to(device).permute(0, 2, 1)
+        s_batch = s_batch.float().to(device).permute(0, 2, 1) # (50, 400, 2)
         input_i = torch.tensor(
-            np.reshape(s_batch[:, :, :SERIES_COUNT].cpu(), ([-1, TIME_LENGTH * SERIES_COUNT]), order="F")).to(device)
+            np.reshape(s_batch[:, :, :SERIES_COUNT].cpu(), ([-1, TIME_LENGTH * SERIES_COUNT]), order="F")).to(device) # (50, 800)
         input_i.requires_grad = True
 
         # TODO: the naming on delta_zeta_batch is misleading. If the network is not incremental, this is
         #       not delta_zeta, but just zeta.
         if incremental:
-            delta_zeta_batch = zeta_batch[:, 1].sub(zeta_batch[:, 0])
+            delta_zeta_batch = zeta_batch[:, 1].sub(zeta_batch[:, 0]) # cor differences.
         else:
             delta_zeta_batch = zeta_batch[:, 1]
 
         delta_zeta_hat = model(input_i).squeeze()
-        delta_zeta = delta_zeta_batch[:, 0].squeeze()
+        delta_zeta = delta_zeta_batch[:, 0].squeeze() # only care about COR, ignore initial height which is same.
 
         optimizer.zero_grad()
 

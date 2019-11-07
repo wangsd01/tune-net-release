@@ -68,7 +68,7 @@ class TuneNet(nn.Module):
         inp1 = inp[:, :self.input_size]
         if self.degenerate:
             inp1 = torch.zeros(inp1.shape).to(self.device)
-        o1 = F.relu(self.fc1(inp1))
+        o1 = F.relu(self.fc1(inp1)) # encode
         inp2 = inp[:, self.input_size:]
         o2 = F.relu(self.fc2(inp2))
         # print(torch.sub(o1, o2))

@@ -172,7 +172,7 @@ class BallSim(object):
                 obj_start_pos[2] = np.random.random() + 4
 
                 # restitution, restitution2 = 0, 0
-
+                # COR, coefficient of restitution, i.e. restoration of ball shape. This is the parameter to tune.
                 if not uniform_difference:
                     restitution = np.random.uniform(0.3, 0.7)
                     restitution2 = np.random.uniform(0.3, 0.7)
@@ -183,13 +183,15 @@ class BallSim(object):
                     restitution = np.random.uniform(*range_override)
                     restitution2 = np.random.uniform(*range_override)
 
-                obj_start_ang_vel = np.random.normal(0, plane_jitter, [3]).tolist()
+                obj_start_ang_vel = np.random.normal(0, plane_jitter, [3]).tolist() # [0, 0, 0] since plane_jitter is 0.
 
                 # save physics world so we have a reference in case we need it later
                 p.saveBullet(osp.join(dataset_base_path, dataset_type, str(run_id), "world_state.bullet"))
                 # start simulation
                 start_time = time.time()
 
+                # use same ball start_pos and ang_vel but different COR to generate two trajectory.
+                # ball state include: start position, ball position list, ball linear velocity list
                 start_position_list, physics_list1, position_list1, _, linear_velocity_list1, _, rgb_list1, depth_list1, seg_list1 = \
                     self.run([restitution, obj_start_pos], obj_start_ang_vel, render=render,
                              random_render=random_render)

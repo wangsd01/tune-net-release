@@ -46,12 +46,12 @@ class DatasetTuneNet(Dataset):
         def make_name(name):
             return osp.join(self.root_dir, str(idx), name + ".npy")
 
-        if self.loadtype == "ground_truth":
-            zeta1 = (np.load(make_name("physics1"))[0], np.load(make_name("start_position"))[0])
+        if self.loadtype == "ground_truth": # physics: [COR, Friction, Mass], start_position: z.
+            zeta1 = (np.load(make_name("physics1"))[0], np.load(make_name("start_position"))[0]) # zeta: [COR, z]
             zeta2 = (np.load(make_name("physics2"))[0], np.load(make_name("start_position"))[0])
             zeta = torch.tensor(np.vstack((zeta1, zeta2))).to(device)
 
-            s1 = np.load(make_name("position1"))[:, 2]
+            s1 = np.load(make_name("position1"))[:, 2] # all z positions of the trajectory.
             s2 = np.load(make_name("position2"))[:, 2]
             s = torch.tensor(np.vstack((s1, s2))).to(device)
 
@@ -70,7 +70,7 @@ class DatasetTuneNet(Dataset):
         if self.transform:
             s[:, :] = self.transform(s[:, :])
 
-        v1 = np.load(make_name("linear_velocity_list1"))[:, 2]
+        v1 = np.load(make_name("linear_velocity_list1"))[:, 2] # all linear velocity on z axis.
         v2 = np.load(make_name("linear_velocity_list2"))[:, 2]
         v = torch.tensor(np.vstack((v1, v2))).to(device)
 
